@@ -1,0 +1,133 @@
+#:kivy 1.7.2
+#:import KivyLexer kivy.extras.highlight.KivyLexer
+#:import Factory kivy.factory.Factory
+
+<CustomLayout>:
+	canvas.before:
+		Color: 
+			rgba: 0, 0, 0, .8
+		Rectangle:
+			pos: self.pos
+			size: self.size
+		
+<HomeScreen>:
+	box_l: boxID
+	BoxLayout:
+		canvas.before:
+			Color:
+				rgba: .6, 0, 0, 1
+			Rectangle: 
+				pos: self.pos
+				size: self.size
+		orientation: 'horizontal'
+		grid_l: gridID 
+		id: boxID
+    	CustomLayout:
+    		id: gridID
+    		btn1: btn1ID
+    		btn2: btn2ID
+    		btn3: btn3ID
+    		btn4: btn4ID
+    		btn5: btn5ID
+    		btn6: btn6ID
+    		btn7: btn7ID
+    		btn8: btn8ID
+    		#####################
+        	cols: 2
+        	padding: 20, 20
+        	spacing: 30, 20
+        	
+        	#######################
+        	Button:
+            	id: btn1ID
+            	text: 'Run this'
+            	on_press: root.search_btn_pressed(self)
+        	Button: 
+        		id: btn2ID
+        		text: 'Rocket League'
+        		on_press: root.search_btn_pressed(self)
+        	Button: 
+        		id: btn3ID
+        		text: 'Tester, wester'
+        		on_press: root.search_btn_pressed(self)
+        	Button: 
+        		id: btn4ID
+        		text: 'River City' 
+        		on_press:root.search_btn_pressed(self)
+        	Button: 
+        		id: btn5ID
+        		text: 'This has been fun' 
+        		on_press:root.search_btn_pressed(self)
+        	Button: 
+        		id: btn6ID
+        		text: 'Go Cards' 
+        		on_press:root.search_btn_pressed(self)
+        	Button: 
+        		id: btn7ID
+        		text: 'Battery Low' 
+        		on_press:root.search_btn_pressed(self)
+        	Button: 
+        		id: btn8ID
+        		text: 'Power Saver' 
+        		on_press:root.search_btn_pressed(self)
+        GridLayout:
+        	id: grid2
+        	label1: label1ID
+        	label2: label2ID
+        	label3: label3ID
+        	label4: label4ID
+        	label5: label5ID
+        	label6: label6ID
+        	label7: label7ID
+        	label8: label8ID
+        	
+        	cols: 2
+        	size_hint: .6, .9
+        	padding: 20, 20
+        	spacing: 20, 1
+        	row_default_height: '100dp'
+        	row_force_default: True
+        	Label:
+        		id: label1ID
+        		text: 'Test1:'
+        		bold: True
+        		size_hint: .3, None
+        		halign: 'left'
+        	Label:
+        		id: label2ID
+        		text: 'Test1Val'
+        		halign: 'left'
+        	Label:
+        		id: label3ID
+        		text: 'Test2:'
+        		bold: True
+        		size_hint: .3, None
+        		halign: 'left'
+        	Label:
+        		id: label4ID
+        		text: 'Test2Val'
+        		halign: 'left'
+        	Label:
+        		id: label5ID
+        		text: 'Test3:'
+        		bold: True
+        		size_hint: .3, None
+        		halign: 'left'
+        	Label:
+        		id: label6ID
+        		text: 'Test3Val'
+        		halign: 'left'
+        	Label:
+        		id: label7ID
+        		text: 'Test4:'
+        		bold: True
+        		size_hint: .3, None
+        		halign: 'left'
+        	Label:
+        		id: label8ID
+        		text: 'Test4Val'
+        		halign: 'left'
+        		
+        		
+        		
+        		

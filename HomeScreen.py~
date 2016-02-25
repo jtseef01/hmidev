@@ -8,7 +8,7 @@ from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label as CoreLabel
 from kivy.core.window import Window
-Window.size = (800, 480)
+Window.size = (640, 1163)
 class HomeScreen(Screen):
     def search_btn_pressed(self, btn_pressed):
       print btn_pressed.text
