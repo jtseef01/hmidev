@@ -27,6 +27,7 @@ class Dashboard(Screen):
 
 class MotorGotoScreen(Screen):
 	def search_btn_pressed(self, btn_pressed):
+		print btn_pressed.text
 		if(btn_pressed.text == '>>'):
 			if(self.ids.slider_id.value < self.ids.slider_id.max):
 				self.ids.slider_id.value += 1
