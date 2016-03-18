@@ -15,22 +15,22 @@
 	BoxLayout:
 		canvas.before:
 			Color:
-				rgba: .6, 0, 0, 1
+				rgba: .5, 0, 0, 1
 			Rectangle: 
 				pos: self.pos
 				size: self.size
 		orientation: 'horizontal'
-		grid_l: custom_grid_id 
+		grid_l: home_grid
 		id: boxID
     	CustomLayout:
-    		id: custom_grid_id
-    		btn1: payload_arm_id
-    		btn2: ignition_id
-    		btn3: vas_id
-    		btn4: motor_goto_id
-    		btn5: servo_1_id
-    		btn6: servo_2_id
-    		btn7: status_id
+    		id: home_grid
+    		btn: payload_arm_id
+    		btn: ignition_id
+    		btn: vas_id
+    		btn: motor_goto_id
+    		btn: servo_1_id
+    		btn: servo_2_id
+    		btn: status_id
     		#####################
         	cols: 2
         	padding: 20, 20
@@ -52,7 +52,7 @@
         	Button: 
         		id: motor_goto_id
         		text: 'Motor Goto' 
-        		on_press:root.search_btn_pressed(self)
+        		on_press: root.manager.current = 'gotomotor'
         	Button: 
         		id: servo_1_id
         		text: 'Servo 1 Turn' 
@@ -63,8 +63,8 @@
         		on_press:root.search_btn_pressed(self)
         	Button: 
         		id: status_id
-        		text: 'Get Status' 
-        		on_press: root.manager.current = 'gotomotor'
+        		text: 'Request Status' 
+        		on_press: root.search_btn_pressed(self)
         BoxLayout:
         	orientation: 'vertical'
         	pos_hint: {'x' : 0, 'y' : .8}
@@ -75,19 +75,19 @@
         		text: 'Status'
         		bold: True
         	GridLayout:
-        		id: grid2
-        		label1: base_potent
-        		label2: base_potent_val
-        		label3: wrist_potent
-        		label4: wrist_potent_val
-        		label5: tele_potent
-        		label6: tele_potent_val
-        		label7: servo_1
-        		label8: servo_1_val
-				label9: servo_2
-				label10: servo_2_val
-				label11: cur_func
-				label12: cur_func_val
+        		id: status_grid
+        		label: base_potent
+        		label: base_potent_val
+        		label: wrist_potent
+        		label: wrist_potent_val
+        		label: tele_potent
+        		label: tele_potent_val
+        		label: servo_1
+        		label: servo_1_val
+				label: servo_2
+				label: servo_2_val
+				label: cur_func
+				label: cur_func_val
         	
 				cols: 2
 				size_hint: .8, .9
@@ -143,7 +143,7 @@
         			size_hint: .9, None
         		Label:
         			id: cur_func_val
-        			text: 'Adjusting Servo'
+        			text: 'Reticulating Splines'
 
 
 <MotorGotoScreen>:
@@ -196,8 +196,8 @@
 				id: slider_id
 				orientation: 'horizontal'
 				min: 0
-				max: 1024.0
-				value: 512.0
+				max: 1024
+				value: 512
 				step: 1
 				pos_hint: {'y': .7}
 			Button:
@@ -208,18 +208,20 @@
 				pos_hint: {'x': 1, 'y': 1}
 				on_press: root.search_btn_pressed(self)
 		BoxLayout:
-			submit_btn: submit_btn_id
-			return_btn: return_btn_id
-			Button:
-				id: submit_btn_id
-				text: 'Submit Command'
-				size_hint: 1, .4
-				on_press: root.search_btn_pressed(self)
+            return_btn: return_btn_id
+			submit_btn: submit_btn_id			
 			Button:
 				id: return_btn_id
 				text: 'Return'
 				size_hint: 1, .4
+                background_color: (1.0, 0.0, 0.0, 1.0)
 				on_press: root.manager.current = 'dash'
+			Button:
+				id: submit_btn_id
+				text: 'Submit Command'
+				size_hint: 1, .4
+                background_color: (0.0, 1.0, 0.0, 1.0)
+				on_press: root.search_btn_pressed(self)
 	
 
 <TestScreen>:
