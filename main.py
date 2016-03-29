@@ -49,8 +49,8 @@ class buttons_pressedApp(App):
 
     def build(self):
 		sm = ScreenManager(transition=NoTransition())
-		sm.add_widget(MotorGotoScreen(name='gotomotor'))
 		sm.add_widget(Dashboard(name='dash'))
+		sm.add_widget(MotorGotoScreen(name='gotomotor'))
 		return sm
 
 if __name__ == '__main__':
