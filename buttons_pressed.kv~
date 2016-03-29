@@ -1,0 +1,231 @@
+#:kivy 1.7.2
+#:import KivyLexer kivy.extras.highlight.KivyLexer
+#:import Factory kivy.factory.Factory
+
+<CustomLayout>:
+	canvas.before:
+		Color: 
+			rgba: .251, .251, .251, 1
+		Rectangle:
+			pos: self.pos
+			size: self.size
+		
+<Dashboard>:
+	box_l: boxID
+	BoxLayout:
+		canvas.before:
+			Color:
+				rgba: .6, 0, 0, 1
+			Rectangle: 
+				pos: self.pos
+				size: self.size
+		orientation: 'horizontal'
+		grid_l: custom_grid_id 
+		id: boxID
+    	CustomLayout:
+    		id: custom_grid_id
+    		btn1: payload_arm_id
+    		btn2: ignition_id
+    		btn3: vas_id
+    		btn4: motor_goto_id
+    		btn5: servo_1_id
+    		btn6: servo_2_id
+    		btn7: status_id
+    		#####################
+        	cols: 2
+        	padding: 20, 20
+        	spacing: 30, 20
+        	
+        	#######################
+        	Button:
+            	id: payload_arm_id
+            	text: 'Payload Arm'
+            	on_press: root.search_btn_pressed(self)
+        	Button: 
+        		id: ignition_id
+        		text: 'Ignition Station'
+        		on_press: root.search_btn_pressed(self)
+        	Button: 
+        		id: vas_id
+        		text: 'VAS'
+        		on_press: root.search_btn_pressed(self)
+        	Button: 
+        		id: motor_goto_id
+        		text: 'Motor Goto' 
+        		on_press:root.search_btn_pressed(self)
+        	Button: 
+        		id: servo_1_id
+        		text: 'Servo 1 Turn' 
+        		on_press:root.search_btn_pressed(self)
+        	Button: 
+        		id: servo_2_id
+        		text: 'Servo 2 Turn' 
+        		on_press:root.search_btn_pressed(self)
+        	Button: 
+        		id: status_id
+        		text: 'Get Status' 
+        		on_press: root.manager.current = 'gotomotor'
+        BoxLayout:
+        	orientation: 'vertical'
+        	pos_hint: {'x' : 0, 'y' : .8}
+        	label1: status_title
+        	size_hint: .8, None
+        	Label:
+        		id: status_title
+        		text: 'Status'
+        		bold: True
+        	GridLayout:
+        		id: grid2
+        		label1: base_potent
+        		label2: base_potent_val
+        		label3: wrist_potent
+        		label4: wrist_potent_val
+        		label5: tele_potent
+        		label6: tele_potent_val
+        		label7: servo_1
+        		label8: servo_1_val
+				label9: servo_2
+				label10: servo_2_val
+				label11: cur_func
+				label12: cur_func_val
+        	
+				cols: 2
+				size_hint: .8, .9
+				pos_hint: {'x' : .1, 'y' : .5}
+				padding: 20, 20
+        		spacing: 20, 1
+        		row_default_height: '50dp'
+        		row_force_default: True
+        		Label:
+        			id: base_potent
+        			text: 'Base Potentiometer:'
+        			bold: True
+        			size_hint: .9, None
+        		Label:
+        			id: base_potent_val
+        			text: '0'
+        		Label:
+        			id: wrist_potent
+        			text: 'Wrist Potentiometer:'
+        			bold: True
+        			size_hint: .9, None
+        		Label:
+        			id: wrist_potent_val
+        			text: '0'
+        		Label:
+        			id: tele_potent
+        			text: 'Telescopic Potentiometer:'
+        			bold: True
+        			size_hint: .9, None
+        		Label:
+        			id: tele_potent_val
+        			text: '0'
+        		Label:
+        			id: servo_1
+        			text: 'Servo 1 Position'
+        			bold: True
+        			size_hint: .9, None
+        		Label:
+        			id: servo_1_val
+        			text: '1'
+        		Label:
+        			id: servo_2
+        			text: 'Servo 2 Position'
+        			bold: True
+        			size_hint: .9, None
+        		Label:
+        			id: servo_2_val
+        			text: '2'
+        		Label:
+        			id: cur_func
+        			text: 'Current Function'
+        			bold: True
+        			size_hint: .9, None
+        		Label:
+        			id: cur_func_val
+        			text: 'Adjusting Servo'
+
+
+<MotorGotoScreen>:
+	canvas.before:
+		Color: 
+			rgba: .251, .251, .251, 1
+		Rectangle:
+			pos: self.pos
+			size: self.size
+	big_box_l: big_box_ID
+	BoxLayout:
+		canvas.before:
+			Color: 
+				rgba: .251, .251, .251, 1
+		small_box_l: small_box_id
+		title_label: title_id
+		value_label: value_id
+		id: big_box_ID
+		orientation: 'vertical'
+		Label: 
+			id: title_id
+			font_size: '25sp'
+			text: 'Motor Goto'
+			bold: True
+		Spinner:
+			text: 'Motor A'
+			values: { 'Motor A', 'Motor B', 'Motor C', 'Motor D' }
+			size_hint: .7, .5
+			pos_hint: {'x':.15}
+		Label:
+			id: value_id
+			text: str(slider_id.value)
+			font_size: '18sp'
+		BoxLayout:
+			size_hint: .8, 1
+			pos_hint: {'x': .1}
+			id: small_box_id
+			orientation: 'horizontal'
+			increment_btn: increment_btn_id
+			decrement_btn: decrement_btn_id
+			slider: slider_id
+			Button:
+				id: decrement_btn_id
+				text: '<<'
+				bold: True
+				size_hint: .4, .4
+				pos_hint: {'x': 1, 'y': 1}
+				on_press: root.search_btn_pressed(self)
+			Slider:
+				id: slider_id
+				orientation: 'horizontal'
+				min: 0
+				max: 1024.0
+				value: 512.0
+				step: 1
+				pos_hint: {'y': .7}
+			Button:
+				id: increment_btn_id
+				text: '>>'
+				bold: True
+				size_hint: .4, .4
+				pos_hint: {'x': 1, 'y': 1}
+				on_press: root.search_btn_pressed(self)
+		BoxLayout:
+			submit_btn: submit_btn_id
+			return_btn: return_btn_id
+			Button:
+				id: submit_btn_id
+				text: 'Submit Command'
+				size_hint: 1, .4
+				on_press: root.search_btn_pressed(self)
+			Button:
+				id: return_btn_id
+				text: 'Return'
+				size_hint: 1, .4
+				on_press: root.manager.current = 'dash'
+	
+
+<TestScreen>:
+	Button: 
+		text: 'Power Saver' 
+        on_press: root.manager.current = 'dash'       		
+        		
+        		
+        		
