@@ -19,7 +19,7 @@ Window.size = (800, 480)
 ##################################################################################
 ## initialization code
 ##################################################################################
-ser = serial.Serial("/dev/ttyACM0", baudrate = 9600)
+ser = serial.Serial("/dev/ttyACM0", baudrate = 9600, timeout = 1)
 screen_manager = None
 q = Queue()
 EXIT = 0    
@@ -85,8 +85,9 @@ class MotorGotoScreen(Screen):
 			elif(self.ids.vas_btn.state == 'down'):
 				text = 'v' + val
 				self.ids.vas_btn.state = 'normal'
+			if(text != ''):
+				ser.write(text)
 			self.manager.current = 'dash'
-			self.manager.current_screen.ids.cur_func_val.text = text
 			
 class CustomLayout(GridLayout):
 	pass
