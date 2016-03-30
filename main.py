@@ -19,8 +19,7 @@ Window.size = (800, 480)
 ##################################################################################
 ## initialization code
 ##################################################################################
-ser = serial.Serial("/dev/ttyACM0", baudrate = 9600)
-screen_manager = None
+#ser = serial.Serial("/dev/ttyACM0", baudrate = 9600)
 q = Queue()
 EXIT = 0    
 
@@ -32,7 +31,8 @@ class SimSerial():
 	def put_on_queue(self):
 		global EXIT
 		while EXIT == 0:
-			print ser.readline()
+			text = ser.readline()
+			self.q.put(text)
 
 
 ##################################################################################
@@ -85,14 +85,16 @@ class MotorGotoScreen(Screen):
 			elif(self.ids.vas_btn.state == 'down'):
 				text = 'v' + val
 				self.ids.vas_btn.state = 'normal'
+			if(text != ''):
+				ser.write(text)
 			self.manager.current = 'dash'
-			self.manager.current_screen.ids.cur_func_val.text = text
 			
 class CustomLayout(GridLayout):
 	pass
                
 class buttons_pressedApp(App):
 	global q
+	screen_manager = None
 	def build(self):
 		screen_manager = ScreenManager(transition=NoTransition())
 		screen_manager.add_widget(Dashboard(name='dash'))
@@ -101,7 +103,6 @@ class buttons_pressedApp(App):
 		return screen_manager
 	 
 	def get_from_queue(self, dt):
-		print("---------> ShowGUI.get_from_queue() entry")
 		try:
 			queue_data = q.get_nowait()
 			text = ''
@@ -109,20 +110,53 @@ class buttons_pressedApp(App):
 				if(qd != '\n'):
 					text += qd
 				else:
-					print("SimKivy.get_from_queue(): got data from queue: " + text)
+					parse_text(text)
 					text = ''
 		except Empty:
-			print("No data received on queue.")
 			return
+	
+	def parse_text(text):
+		dash = screen_manager.get_screen('dash')
+		char = text[0]
+		if(char == 'o'):
+			dash.ids.door_val.text = 'Open'
+		elif(char == 'c'):
+			dash.ids.door_val.text = 'Closed'
+		elif(char == 'r'):
+			dash.ids.state_val.text = 'Running'
+		elif(char == 'p'):
+			dash.ids.state_val.text = 'Paused'
+		elif(char == 'w'):
+			val = ''
+			for i in range(1, len(text) - 1): 
+				val += text[i]
+			dash.ids.wrist_potent_val.text = val
+		elif(char == 't'):
+			val = ''
+			for i in range(1, len(text) - 1): 
+				val += text[i]
+			dash.ids.tele_potent_val.text = val
+		elif(char == 'b'):
+			val = ''
+			for i in range(1, len(text) - 1): 
+				val += text[i]
+			dash.ids.base_potent_val.text = val
+		elif(char == 'i'):
+			val = ''
+			for i in range(1, len(text) - 1): 
+				val += text[i]
+			dash.ids.ignitor_potent_val.text = val
+		elif(char == 'v'):
+			val = ''
+			for i in range(1, len(text) - 1): 
+				val += text[i]
+			dash.ids.vas_potent_val.text = val
 
 if __name__ == '__main__':
-	global q
 	ss = SimSerial(q)
 
 	simSerial_thread = Thread(name="simSerial",target=ss.put_on_queue)
 	simSerial_thread.start()
-
-	print("Starting KivyGui().run()")
 
 	buttons_pressedApp().run()
 
