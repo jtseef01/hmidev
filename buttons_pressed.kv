@@ -24,13 +24,14 @@
 		id: boxID
     	CustomLayout:
     		id: home_grid
-    		btn: payload_arm_id
-    		btn: ignition_id
-    		btn: vas_id
+    		btn: close_door_id
+    		btn: open_door_id
+    		btn: loosen_servo_id
+    		btn: grip_servo_id
+    		btn: reset_id
+    		btn: play_id
     		btn: motor_goto_id
-    		btn: servo_1_id
-    		btn: servo_2_id
-    		btn: status_id
+    		btn: exit_id
     		#####################
         	cols: 2
         	padding: 20, 20
@@ -38,33 +39,37 @@
         	
         	#######################
         	Button:
-            	id: payload_arm_id
-            	text: 'Payload Arm'
+            	id: close_door_id
+            	text: 'Close Door'
             	on_press: root.search_btn_pressed(self)
-        	Button: 
-        		id: ignition_id
-        		text: 'Ignition Station'
-        		on_press: root.search_btn_pressed(self)
-        	Button: 
-        		id: vas_id
-        		text: 'VAS'
-        		on_press: root.search_btn_pressed(self)
+            Button:
+            	id: open_door_id
+            	text: 'Open Door'
+            	on_press: root.search_btn_pressed(self)
+            Button:
+            	id: loosen_servo_id
+            	text: 'Servo Loosen'
+            	on_press: root.search_btn_pressed(self)
+            Button:
+            	id: grip_servo_id
+            	text: 'Servo Grip'
+            	on_press: root.search_btn_pressed(self)
+            Button:
+            	id: reset_id
+            	text: 'Reset'
+            	on_press: root.search_btn_pressed(self)
+            Button:
+            	id: play_id
+            	text: 'Play'
+            	on_press: root.search_btn_pressed(self)
         	Button: 
         		id: motor_goto_id
         		text: 'Motor Goto' 
         		on_press: root.manager.current = 'gotomotor'
-        	Button: 
-        		id: servo_1_id
-        		text: 'Servo 1 Turn' 
-        		on_press:root.search_btn_pressed(self)
-        	Button: 
-        		id: servo_2_id
-        		text: 'Servo 2 Turn' 
-        		on_press:root.search_btn_pressed(self)
-        	Button: 
-        		id: status_id
-        		text: 'Request Status' 
-        		on_press: root.search_btn_pressed(self)
+        	Button:
+            	id: exit_id
+            	text: 'Exit'
+            	on_press: root.search_btn_pressed(self)
         BoxLayout:
         	orientation: 'vertical'
         	pos_hint: {'x' : 0, 'y' : .8}
@@ -74,28 +79,47 @@
         		id: status_title
         		text: 'Status'
         		bold: True
+        		font_size: '18sp'
         	GridLayout:
         		id: status_grid
+        		label: state
+				label: state_val
+				label: door
+        		label: door_val
         		label: base_potent
         		label: base_potent_val
         		label: wrist_potent
         		label: wrist_potent_val
         		label: tele_potent
         		label: tele_potent_val
-        		label: servo_1
-        		label: servo_1_val
-				label: servo_2
-				label: servo_2_val
-				label: cur_func
-				label: cur_func_val
+        		label: ignitor_potent
+        		label: ignitor_potent_val
+        		label: vas_potent
+        		label: vas_potent_val
         	
 				cols: 2
 				size_hint: .8, .9
-				pos_hint: {'x' : .1, 'y' : .5}
+				pos_hint: {'x' : .1, 'y' : .9}
 				padding: 20, 20
         		spacing: 20, 1
         		row_default_height: '50dp'
         		row_force_default: True
+        		Label:
+        			id: state
+        			text: 'State'
+        			bold: True
+        			size_hint: .9, None
+        		Label:
+        			id: state_val
+        			text: 'Paused'
+        		Label:
+        			id: door
+        			text: 'Door:'
+        			bold: True
+        			size_hint: .9, None
+        		Label:
+        			id: door_val
+        			text: 'Open'
         		Label:
         			id: base_potent
         			text: 'Base Potentiometer:'
@@ -121,30 +145,21 @@
         			id: tele_potent_val
         			text: '0'
         		Label:
-        			id: servo_1
-        			text: 'Servo 1 Position'
+        			id: ignitor_potent
+        			text: 'Ignitor Potentiometer:'
         			bold: True
         			size_hint: .9, None
         		Label:
-        			id: servo_1_val
-        			text: '1'
+        			id: ignitor_potent_val
+        			text: '0'
         		Label:
-        			id: servo_2
-        			text: 'Servo 2 Position'
+        			id: vas_potent
+        			text: 'VAS Potentiometer:'
         			bold: True
         			size_hint: .9, None
         		Label:
-        			id: servo_2_val
-        			text: '2'
-        		Label:
-        			id: cur_func
-        			text: 'Current Function'
-        			bold: True
-        			size_hint: .9, None
-        		Label:
-        			id: cur_func_val
-        			text: 'Reticulating Splines'
-
+        			id: vas_potent_val
+        			text: '0'
 
 <MotorGotoScreen>:
 	canvas.before:
@@ -168,14 +183,39 @@
 			font_size: '25sp'
 			text: 'Motor Goto'
 			bold: True
-		Spinner:
-			text: 'Motor A'
-			values: { 'Motor A', 'Motor B', 'Motor C', 'Motor D' }
-			size_hint: .7, .5
-			pos_hint: {'x':.15}
+		BoxLayout:
+			id: button_box_id
+			size_hint: .8, .8
+			pos_hint: {'x': .1}
+			orientation: 'horizontal'
+			button: wrist_btn
+			button: telescopic_btn
+			button: base_btn
+			button: ignitor_btn
+			button: vas_btn
+			ToggleButton:
+				id: wrist_btn
+				text: 'Wrist'
+				group: 'buttons'
+			ToggleButton:
+				id: telescopic_btn
+				text: 'Telescopic'
+				group: 'buttons'
+			ToggleButton:
+				id: base_btn
+				text: 'Base'
+				group: 'buttons'
+			ToggleButton:
+				id: ignitor_btn
+				text: 'Ignitor'
+				group: 'buttons'
+			ToggleButton:
+				id: vas_btn
+				text: 'VAS'
+				group: 'buttons'
 		Label:
 			id: value_id
-			text: str(slider_id.value)
+			text: str(int(slider_id.value))
 			font_size: '18sp'
 		BoxLayout:
 			size_hint: .8, 1
