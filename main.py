@@ -19,7 +19,7 @@ Window.size = (800, 480)
 ##################################################################################
 ## initialization code
 ##################################################################################
-#ser = serial.Serial("/dev/ttyACM0", baudrate = 9600)
+ser = serial.Serial("/dev/ttyACM0", baudrate = 9600, timeout = 1)
 q = Queue()
 EXIT = 0    
 
@@ -31,8 +31,8 @@ class SimSerial():
 	def put_on_queue(self):
 		global EXIT
 		while EXIT == 0:
-			text = ser.readline()
-			self.q.put(text)
+			self.text = ser.readline()
+			self.q.put(self.text)
 
 
 ##################################################################################
@@ -95,11 +95,14 @@ class CustomLayout(GridLayout):
 class buttons_pressedApp(App):
 	global q
 	screen_manager = None
+	dash = None
 	def build(self):
 		screen_manager = ScreenManager(transition=NoTransition())
 		screen_manager.add_widget(Dashboard(name='dash'))
+		self.dash = screen_manager.get_screen('dash')
+		print self.dash.name
 		screen_manager.add_widget(MotorGotoScreen(name='gotomotor'))
-		Clock.schedule_interval(self.get_from_queue, 1.0)
+		Clock.schedule_interval(self.get_from_queue, .1)
 		return screen_manager
 	 
 	def get_from_queue(self, dt):
@@ -107,51 +110,53 @@ class buttons_pressedApp(App):
 			queue_data = q.get_nowait()
 			text = ''
 			for qd in queue_data:
-				if(qd != '\n'):
+				if(qd != '\n' and qd != '\r'):
 					text += qd
+				elif(qd == '\r'):
+					pass
 				else:
-					parse_text(text)
+					char = text[0]
+					if(char == 'o'):
+						self.dash.ids.door_val.text = 'Open'
+					elif(char == 'c'):
+						self.dash.ids.door_val.text = 'Closed'
+					elif(char == 'r'):
+						self.dash.ids.state_val.text = 'Running'
+					elif(char == 'p'):
+						self.dash.ids.state_val.text = 'Paused'
+					elif(char == 'w'):
+						val = ''
+						for i in range(1, len(text)):
+							if(text[i] != '\r' and text[i] != '\n'): 
+								val += text[i]
+						self.dash.ids.wrist_potent_val.text = val
+					elif(char == 't'):
+						val = ''
+						for i in range(1, len(text)):
+							if(text[i] != '\r' and text[i] != '\n'): 
+								val += text[i]
+						self.dash.ids.tele_potent_val.text = val
+					elif(char == 'b'):
+						val = ''
+						for i in range(1, len(text)):
+							if(text[i] != '\r' and text[i] != '\n'): 
+								val += text[i]
+						self.dash.ids.base_potent_val.text = val
+					elif(char == 'i'):
+						val = ''
+						for i in range(1, len(text)):
+							if(text[i] != '\r' and text[i] != '\n'): 
+								val += text[i]
+						self.dash.ids.ignitor_potent_val.text = val
+					elif(char == 'v'):
+						val = ''
+						for i in range(1, len(text)):
+							if(text[i] != '\r' and text[i] != '\n'): 
+								val += text[i]
+						self.dash.ids.vas_potent_val.text = val
 					text = ''
 		except Empty:
 			return
-	
-	def parse_text(text):
-		dash = screen_manager.get_screen('dash')
-		char = text[0]
-		if(char == 'o'):
-			dash.ids.door_val.text = 'Open'
-		elif(char == 'c'):
-			dash.ids.door_val.text = 'Closed'
-		elif(char == 'r'):
-			dash.ids.state_val.text = 'Running'
-		elif(char == 'p'):
-			dash.ids.state_val.text = 'Paused'
-		elif(char == 'w'):
-			val = ''
-			for i in range(1, len(text) - 1): 
-				val += text[i]
-			dash.ids.wrist_potent_val.text = val
-		elif(char == 't'):
-			val = ''
-			for i in range(1, len(text) - 1): 
-				val += text[i]
-			dash.ids.tele_potent_val.text = val
-		elif(char == 'b'):
-			val = ''
-			for i in range(1, len(text) - 1): 
-				val += text[i]
-			dash.ids.base_potent_val.text = val
-		elif(char == 'i'):
-			val = ''
-			for i in range(1, len(text) - 1): 
-				val += text[i]
-			dash.ids.ignitor_potent_val.text = val
-		elif(char == 'v'):
-			val = ''
-			for i in range(1, len(text) - 1): 
-				val += text[i]
-			dash.ids.vas_potent_val.text = val
-
 if __name__ == '__main__':
 	ss = SimSerial(q)
 
