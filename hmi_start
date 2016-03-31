@@ -1,0 +1,9 @@
+#!/bin/bash
+
+echo "HMI starting up..."
+sleep 10
+echo "Initializing Pi serial port..."
+sleep 10
+echo "Initializing Arduino serial port..."
+sleep 10
+python /home/sysop/hmidev/main.py

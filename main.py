@@ -100,7 +100,6 @@ class buttons_pressedApp(App):
 		screen_manager = ScreenManager(transition=NoTransition())
 		screen_manager.add_widget(Dashboard(name='dash'))
 		self.dash = screen_manager.get_screen('dash')
-		print self.dash.name
 		screen_manager.add_widget(MotorGotoScreen(name='gotomotor'))
 		Clock.schedule_interval(self.get_from_queue, .1)
 		return screen_manager
