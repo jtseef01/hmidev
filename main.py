@@ -1,3 +1,7 @@
+#########################################
+##Authors: Jared Seeforth; Logan Hall
+#########################################
+
 import serial
 import kivy
 import sys
@@ -13,13 +17,14 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label as CoreLabel
 from kivy.core.window import Window
 from kivy.clock import Clock
-import time
+import datetime
+from datetime import timedelta
 Window.size = (800, 480)
 
 ##################################################################################
 ## initialization code
 ##################################################################################
-ser = serial.Serial("/dev/ttyACM0", baudrate = 9600, timeout = 1)
+#ser = serial.Serial("/dev/ttyACM0", baudrate = 9600, timeout = 1)
 q = Queue()
 EXIT = 0    
 
@@ -30,10 +35,25 @@ class SimSerial():
 
 	def put_on_queue(self):
 		global EXIT
+		potent_counter = 0
+		pass_thru = 'glpmrocadefhjknq'
+		potent_vals = 'witbv'
+		last_rcv = 'z'
 		while EXIT == 0:
 			self.text = ser.readline()
-			self.q.put(self.text)
-
+			if(len(self.text) > 0):
+				if(self.text[0] != last_rcv[0] and last_rcv[0] in potent_vals):
+					self.q.put(last_rcv)
+				
+				if(self.text[0] in pass_thru):
+					self.q.put(self.text)
+				
+				else:
+					potent_counter += 1
+					if(potent_counter >= 10):
+						self.q.put(self.text)
+						potent_counter = 0
+				last_rcv = self.text
 
 ##################################################################################
 ## GUI CODE
@@ -42,17 +62,23 @@ class Dashboard(Screen):
 	def search_btn_pressed(self, btn_pressed):
 		global EXIT
 		if(btn_pressed.text == 'Close Door'):
-			ser.write('c')
+			#ser.write('c')
+			print '[DEBUG] sent c'
 		elif(btn_pressed.text == 'Open Door'):
-			ser.write('o')
+			#ser.write('o')
+			print '[DEBUG] sent o'
 		elif(btn_pressed.text == 'Servo Loosen'):
 			ser.write('l')
+			print '[DEBUG] sent l'
 		elif(btn_pressed.text == 'Servo Grip'):
-			ser.write('g')
+			#ser.write('g')
+			print '[DEBUG] sent g'
 		elif(btn_pressed.text == 'Play'):
-			ser.write('p')
+			#ser.write('p')
+			print '[DEBUG] sent p'
 		elif(btn_pressed.text == 'Reset'):
-			ser.write('r')
+			#ser.write('r')
+			print '[DEBUG] sent r'
 		elif(btn_pressed.text == 'Exit'):
 			EXIT = 1
 			sys.exit()
@@ -84,9 +110,10 @@ class MotorGotoScreen(Screen):
 				self.ids.ignitor_btn.state = 'normal'
 			elif(self.ids.vas_btn.state == 'down'):
 				text = 'v' + val
-				self.ids.vas_btn.state = 'normal'
+			self.ids.vas_btn.state = 'normal'
 			if(text != ''):
-				ser.write(text)
+				#ser.write(text)
+				print '[DEBUG] sent: ' + text
 			self.manager.current = 'dash'
 			
 class CustomLayout(GridLayout):
@@ -96,41 +123,74 @@ class buttons_pressedApp(App):
 	global q
 	screen_manager = None
 	dash = None
+	motor_goto = None
 	def build(self):
 		screen_manager = ScreenManager(transition=NoTransition())
 		screen_manager.add_widget(Dashboard(name='dash'))
 		self.dash = screen_manager.get_screen('dash')
 		screen_manager.add_widget(MotorGotoScreen(name='gotomotor'))
-		Clock.schedule_interval(self.get_from_queue, .1)
+		self.motor_goto = screen_manager.get_screen('gotomotor')
+		Clock.schedule_interval(self.get_from_queue, .001)
 		return screen_manager
 	 
 	def get_from_queue(self, dt):
 		try:
-			queue_data = q.get_nowait()
-			for data_rcv in queue_data:
-					data_rcv = data_rcv.replace('\n', '\0')
-					data_rcv = data_rcv.replace('\r', '\0')
-					print data_rcv
-					
-					char = text[0]
-					if(char == 'o'):
-						self.dash.ids.door_val.text = 'Open'
-					elif(char == 'c'):
-						self.dash.ids.door_val.text = 'Closed'
-					elif(char == 'r'):
-						self.dash.ids.state_val.text = 'Running'
-					elif(char == 'p'):
-						self.dash.ids.state_val.text = 'Paused'
-					elif(char == 'w'):
-						self.dash.ids.wrist_potent_val.text = data_rcv[1:]
-					elif(char == 't'):
-						self.dash.ids.tele_potent_val.text = data_rcv[1:]
-					elif(char == 'b'):
-						self.dash.ids.base_potent_val.text = data_rcv[1:]
-					elif(char == 'i'):
-						self.dash.ids.ignitor_potent_val.text = data_rcv[1:]
-					elif(char == 'v'):
-						self.dash.ids.vas_potent_val.text = data_rcv[1:]
+			data_rcv = q.get_nowait()
+			print '[DEBUG] data from queue: ' + data_rcv
+			data_rcv = data_rcv.replace('\n', '\0')
+			data_rcv = data_rcv.replace('\r', '\0')		
+			char = data_rcv[0]
+			
+			if 'p' in data_rcv:
+				self.dash.ids.state_val.text = 'Paused (Listening)'
+				return
+				
+			if(char == 'o'):
+				self.dash.ids.door_val.text = 'Open'
+			elif(char == 'c'):
+				self.dash.ids.door_val.text = 'Closed'
+			elif(char == 'r'):
+				self.dash.ids.state_val.text = 'Active (Not Listening)'
+			elif(char == 'm'):
+				self.dash.ids.door_val.text = 'Active (Listening)'
+			elif(char == 'w'):
+				self.dash.ids.wrist_potent_val.text = data_rcv[1:]
+			elif(char == 't'):
+				self.dash.ids.tele_potent_val.text = data_rcv[1:]
+			elif(char == 'b'):
+				self.dash.ids.base_potent_val.text = data_rcv[1:]
+			elif(char == 'i'):
+				self.dash.ids.ignitor_potent_val.text = data_rcv[1:]
+			elif(char == 'v'):
+				self.dash.ids.vas_potent_val.text = data_rcv[1:]
+			elif(char == 'a'):
+				self.motor_goto.ids.base_pivot_vertical.text.strip()
+				self.motor_goto.ids.base_pivot_vertical.text += ' ' + data_rcv[1:]
+			elif(char == 'd'):
+				self.motor_goto.ids.base_pivot_insert.text.strip()
+				self.motor_goto.ids.base_pivot_insert.text += ' ' + data_rcv[1:]
+			elif(char == 'e'):
+				self.motor_goto.ids.base_pivot_pickup.text.strip()
+				self.motor_goto.ids.base_pivot_pickup.text += ' ' + data_rcv[1:]
+			elif(char == 'f'):
+				self.motor_goto.ids.tel_retract.text.strip()
+				self.motor_goto.ids.tel_retract.text += ' ' + data_rcv[1:]
+			elif(char == 'h'):
+				self.motor_goto.ids.tel_extend.text.strip()
+				self.motor_goto.ids.tel_extend.text += ' ' + data_rcv[1:]
+			elif(char == 'j'):
+				self.motor_goto.ids.wrist_insert.text.strip()
+				self.motor_goto.ids.wrist_insert.text += ' ' + data_rcv[1:]
+			elif(char == 'k'):
+				self.motor_goto.ids.wrist_pickup.text.strip()
+				self.motor_goto.ids.wrist_pickup.text += ' ' + data_rcv[1:]
+			elif(char == 'n'):
+				self.motor_goto.ids.launch_pos.text.strip()
+				self.motor_goto.ids.launch_pos.text += ' ' + data_rcv[1:]
+			elif(char == 'q'):
+				self.motor_goto.ids.vas_horizontal.text.strip()
+				self.motor_goto.ids.vas_horizontal.text += ' ' + data_rcv[1:]
+
 		except Empty:
 			return
 if __name__ == '__main__':

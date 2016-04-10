@@ -111,7 +111,7 @@
         			size_hint: .9, None
         		Label:
         			id: state_val
-        			text: 'Paused'
+        			text: '-'
         		Label:
         			id: door
         			text: 'Door:'
@@ -119,7 +119,7 @@
         			size_hint: .9, None
         		Label:
         			id: door_val
-        			text: 'Open'
+        			text: '-'
         		Label:
         			id: base_potent
         			text: 'Base Potentiometer:'
@@ -127,7 +127,7 @@
         			size_hint: .9, None
         		Label:
         			id: base_potent_val
-        			text: '0'
+        			text: '-'
         		Label:
         			id: wrist_potent
         			text: 'Wrist Potentiometer:'
@@ -135,7 +135,7 @@
         			size_hint: .9, None
         		Label:
         			id: wrist_potent_val
-        			text: '0'
+        			text: '-'
         		Label:
         			id: tele_potent
         			text: 'Telescopic Potentiometer:'
@@ -143,15 +143,15 @@
         			size_hint: .9, None
         		Label:
         			id: tele_potent_val
-        			text: '0'
+        			text: '-'
         		Label:
         			id: ignitor_potent
-        			text: 'Ignitor Potentiometer:'
+        			text: 'Igniter Potentiometer:'
         			bold: True
         			size_hint: .9, None
         		Label:
         			id: ignitor_potent_val
-        			text: '0'
+        			text: '-'
         		Label:
         			id: vas_potent
         			text: 'VAS Potentiometer:'
@@ -159,7 +159,7 @@
         			size_hint: .9, None
         		Label:
         			id: vas_potent_val
-        			text: '0'
+        			text: '-'
 
 <MotorGotoScreen>:
 	canvas.before:
@@ -185,8 +185,8 @@
 			bold: True
 		BoxLayout:
 			id: button_box_id
-			size_hint: .8, .8
-			pos_hint: {'x': .1}
+			size_hint: .95, .8
+			pos_hint: {'x': .025}
 			orientation: 'horizontal'
 			button: wrist_btn
 			button: telescopic_btn
@@ -207,7 +207,7 @@
 				group: 'buttons'
 			ToggleButton:
 				id: ignitor_btn
-				text: 'Ignitor'
+				text: 'Igniter'
 				group: 'buttons'
 			ToggleButton:
 				id: vas_btn
@@ -218,8 +218,8 @@
 			text: str(int(slider_id.value))
 			font_size: '18sp'
 		BoxLayout:
-			size_hint: .8, 1
-			pos_hint: {'x': .1}
+			size_hint: .8, .8
+			pos_hint: {'x': .1, 'y': .8}
 			id: small_box_id
 			orientation: 'horizontal'
 			increment_btn: increment_btn_id
@@ -247,6 +247,61 @@
 				size_hint: .4, .4
 				pos_hint: {'x': 1, 'y': 1}
 				on_press: root.search_btn_pressed(self)
+		BoxLayout: 
+			grid: ref_grid
+			label: ref_title
+			orientation: 'vertical' 
+			pos_hint: {'y' : .9}
+			Label:
+				id: ref_title
+				text: 'Reference'
+				font_size: '18sp'
+				bold: True
+				
+			GridLayout:
+				id: ref_grid
+				pos_hint: {'y': .9}
+				cols: 3
+        		padding: 20, 20
+        		spacing: 30, 20
+        		label: base_pivot_vertical
+        		label: base_pivot_insert
+        		label: base_pivot_pickup
+        		label: tel_retract
+        		label: tel_extend
+        		label: wrist_insert
+        		label: wrist_pickup
+        		label: launch_pos
+        		label: vas_horizontal
+        		Label: 
+        			id: base_pivot_vertical
+        			text: 'Base Pivot Vertical:     '
+        		Label: 
+        			id: base_pivot_insert
+        			text: 'Base Pivot Insert:     '
+        		Label: 
+        			id: base_pivot_pickup
+        			text: 'Base Pivot Pickup:     '
+        		Label: 
+        			id: tel_retract
+        			text: 'Telescopic Retract:     '
+        		Label: 
+        			id: tel_extend
+        			text: 'Telescopic Extend:     '
+        		Label: 
+        			id: wrist_insert
+        			text: 'Wrist Insert:     '
+        		Label: 
+        			id: wrist_pickup
+        			text: 'Wrist Pickup:     '
+        		Label:
+        			id: launch_pos
+        			text: 'VAS Launch Position:     '
+        		Label: 
+        			id: vas_horizontal
+        			text: 'VAS Horizontal:     '
+        		
+			
 		BoxLayout:
             return_btn: return_btn_id
 			submit_btn: submit_btn_id			
