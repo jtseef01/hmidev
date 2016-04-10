@@ -1,9 +1,18 @@
 #!/bin/bash
 
-echo "HMI starting up..."
-sleep 10
-echo "Initializing Pi serial port..."
-sleep 10
-echo "Initializing Arduino serial port..."
-sleep 10
+a=1
+sp="/-\|"
+echo -n ' '
+printf "HMI Initialization in progress  "
+do
+	printf "\b${sp:a++%${#sp}:1}"
+	sleep .1
+done
+
+#echo "HMI starting up..."
+#sleep 10
+#echo "Initializing Pi serial port..."
+#sleep 10
+#echo "Initializing Arduino serial port..."
+#sleep 10
 python /home/sysop/hmidev/main.py
