@@ -36,7 +36,11 @@ class SimSerial():
 	def put_on_queue(self):
 		global EXIT
 		potent_counter = 0
+<<<<<<< HEAD
 		pass_thru = 'glpmrocadefhjknq'
+=======
+		pass_thru = 'glproc'
+>>>>>>> 6b0adfae560f4b4696f4082f97b89724035053db
 		potent_vals = 'witbv'
 		last_rcv = 'z'
 		while EXIT == 0:
@@ -129,7 +133,10 @@ class buttons_pressedApp(App):
 		screen_manager.add_widget(Dashboard(name='dash'))
 		self.dash = screen_manager.get_screen('dash')
 		screen_manager.add_widget(MotorGotoScreen(name='gotomotor'))
+<<<<<<< HEAD
 		self.motor_goto = screen_manager.get_screen('gotomotor')
+=======
+>>>>>>> 6b0adfae560f4b4696f4082f97b89724035053db
 		Clock.schedule_interval(self.get_from_queue, .001)
 		return screen_manager
 	 
@@ -142,17 +149,27 @@ class buttons_pressedApp(App):
 			char = data_rcv[0]
 			
 			if 'p' in data_rcv:
+<<<<<<< HEAD
 				self.dash.ids.state_val.text = 'Paused (Listening)'
 				return
 				
+=======
+				self.dash.ids.state_val.text = 'Paused'
+				return
+
+>>>>>>> 6b0adfae560f4b4696f4082f97b89724035053db
 			if(char == 'o'):
 				self.dash.ids.door_val.text = 'Open'
 			elif(char == 'c'):
 				self.dash.ids.door_val.text = 'Closed'
 			elif(char == 'r'):
+<<<<<<< HEAD
 				self.dash.ids.state_val.text = 'Active (Not Listening)'
 			elif(char == 'm'):
 				self.dash.ids.door_val.text = 'Active (Listening)'
+=======
+				self.dash.ids.state_val.text = 'Running'
+>>>>>>> 6b0adfae560f4b4696f4082f97b89724035053db
 			elif(char == 'w'):
 				self.dash.ids.wrist_potent_val.text = data_rcv[1:]
 			elif(char == 't'):
@@ -163,6 +180,7 @@ class buttons_pressedApp(App):
 				self.dash.ids.ignitor_potent_val.text = data_rcv[1:]
 			elif(char == 'v'):
 				self.dash.ids.vas_potent_val.text = data_rcv[1:]
+<<<<<<< HEAD
 			elif(char == 'a'):
 				self.motor_goto.ids.base_pivot_vertical.text.strip()
 				self.motor_goto.ids.base_pivot_vertical.text += ' ' + data_rcv[1:]
@@ -191,6 +209,8 @@ class buttons_pressedApp(App):
 				self.motor_goto.ids.vas_horizontal.text.strip()
 				self.motor_goto.ids.vas_horizontal.text += ' ' + data_rcv[1:]
 
+=======
+>>>>>>> 6b0adfae560f4b4696f4082f97b89724035053db
 		except Empty:
 			return
 if __name__ == '__main__':
